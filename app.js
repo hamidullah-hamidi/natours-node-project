@@ -1,39 +1,50 @@
 const express = require('express');
 const fs = require('fs');
+const morgan = require('morgan');
+
+// 1) MIDDLEWARES
+
+app.use(morgan('dev'));
 
 const app = express();
+
 app.use(express.json());
 
-// app.get('/', (req, res) => {
-//   res.status(200).json({ message: 'hello from the server', app: 'natours' });
-// });
+app.use((req, res, next) => {
+  console.log('Hell from the meddleware');
+  next();
+});
 
-// app.post('/', (req, res) => {
-//   res.send('Post method work!');
-// });
-
-console.log(`${__dirname}/dev-data/data/tours-simple.json`);
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString().split('T')[0];
+  next();
+});
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-app.get('/api/v1/tours', (req, res) => {
+// 2) Route Handlers
+
+const getAllTours = (req, res) => {
+  console.log(req.requestTime);
+
   res.status(200).json({
+    requestedTime: req.requestTime,
     status: 'success',
-    results: tours.length,
+    result: tours.length,
     data: {
       tours,
     },
   });
-});
+};
 
-app.get('/api/v1/tours/:id', (req, res) => {
+const getTour = (req, res) => {
   const id = req.params.id * 1;
-  const tour = tours.find((el) => (el.id = id));
+  const tour = tours.find((e) => e.id === id);
 
   if (id > tours.length || !tours) {
-    return res.status(404).json({
+    res.status(404).json({
       status: 'faild',
       message: 'Invalid ID',
     });
@@ -41,20 +52,19 @@ app.get('/api/v1/tours/:id', (req, res) => {
 
   res.status(200).json({
     status: 'success',
+    result: tours.length,
     data: {
       tour,
     },
   });
-});
+};
 
-app.post('/api/v1/tours', (req, res) => {
-  // console.log(req.body);
-
+const createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign(
     { id: newId },
     req.body
-  ); /* آیدی را با آبچکت درخواست یکجا میکند*/
+  ); /* آیدی را با آبچکت delete درخواست  یکجا میکند*/
 
   tours.push(newTour);
 
@@ -70,7 +80,53 @@ app.post('/api/v1/tours', (req, res) => {
       });
     }
   );
-});
+};
+
+const updateTour = (req, res) => {
+  if (req.params.id * 1 > tours.length) {
+    return res.status(404).json({
+      status: 'faild',
+      message: 'Faild to update!',
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: 'Upadated',
+  });
+};
+
+const deleteTour = (req, res) => {
+  if (req.params.id * 1 > tours.length) {
+    return res.status(404).json({
+      status: 'faild',
+      message: 'Faild to delete!',
+    });
+  }
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+};
+
+// app.get('/api/v1/tours', getAllTours);
+// app.get('/api/v1/tours/:id', getTour);
+// app.post('/api/v1/tours', createTour);
+// app.patch('/api/v1/tours/:id', updateTour);
+// app.delete('/api/v1/tours/:id', deleteTour);
+
+// 3) Routs
+
+app.route('/api/v1/tours').get(getAllTours).post(createTour);
+
+app
+  .route('/api/v1/tours/:id')
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour);
+
+// 4) Start Server
 
 const port = 3000;
 
