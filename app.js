@@ -4,9 +4,9 @@ const morgan = require('morgan');
 
 // 1) MIDDLEWARES
 
-app.use(morgan('dev'));
-
 const app = express();
+
+app.use(morgan('dev'));
 
 app.use(express.json());
 
@@ -64,11 +64,7 @@ const createTour = (req, res) => {
   const newTour = Object.assign(
     { id: newId },
     req.body
-<<<<<<< HEAD
   ); /* آیدی را با آبچکت delete درخواست  یکجا میکند*/
-=======
-  ); /* آیدی را با آبچکت درخواست یکجا میکند*/
->>>>>>> b7b615ea4966faa55170e75bd8e5fd476108fb9c
 
   tours.push(newTour);
 
