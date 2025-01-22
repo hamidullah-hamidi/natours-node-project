@@ -4,7 +4,7 @@
   "description": "learning node.js, express, mongoDB",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js"
   },
   "author": "hamid",
   "license": "ISC",
