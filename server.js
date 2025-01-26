@@ -11,11 +11,47 @@ const DB = process.env.DATABASE.replace(
 
 mongoose
   .connect(DB, {
-    useNewUrlParser: true,
+    // useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
+    // useUnifiedTopology: true,
   })
   .then((con) => console.log(con.connections));
+
+// -1 schema
+const tourSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'A Tour mast have a name'],
+    unique: true,
+  },
+  rating: {
+    type: Number,
+    default: 4.5,
+  },
+  price: {
+    type: Number,
+    required: [true, 'A Tour mast have a price'],
+  },
+});
+
+// -2 model
+const Tour = mongoose.model('Tour', tourSchema);
+
+const testTour = new Tour({
+  name: 'The Forst Hiker',
+  rating: 4.7,
+  price: 200,
+});
+
+testTour
+  .save()
+  .then((doc) => {
+    console.log(doc);
+  })
+  .catch((err) => {
+    console.log('ERROR: ', err);
+  });
 
 const port = process.env.PORT;
 
