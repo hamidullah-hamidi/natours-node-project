@@ -44,6 +44,14 @@ const testTour = new Tour({
   price: 200,
 });
 
+const testTour1 = new Tour({
+  name: 'hamid',
+  rating: 10,
+  price: 500,
+});
+
+testTour1.save().then((doc) => console.log(doc));
+
 testTour
   .save()
   .then((doc) => {
