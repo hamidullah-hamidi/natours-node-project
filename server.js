@@ -71,6 +71,21 @@ const tourSchema = new mongoose.Schema({
 
 const Tour = mongoose.model('Tour', tourSchema);
 
+const testTour1 = new Tour({
+  name: 'yasser',
+  price: 100,
+  rating: 5,
+});
+
+testTour1
+  .save()
+  .then((doc) => {
+    console.log(doc);
+  })
+  .then((err) => {
+    console.log(err);
+  });
+
 const testTour = new Tour({
   name: 'hamid',
   price: 200,
