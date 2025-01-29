@@ -16,14 +16,14 @@ const tourSchema = new mongoose.Schema({
     required: [true, 'A tour mast have a maxGroupSize'],
   },
   difficulty: {
-    type: Number,
+    type: String,
     required: [true, 'A tour mast have a difficulty'],
   },
-  ratingAverage: {
+  ratingsAverage: {
     type: Number,
     default: 4.5,
   },
-  ratingQuantity: {
+  ratingsQuantity: {
     type: Number,
     default: 0,
   },
