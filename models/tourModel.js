@@ -37,7 +37,7 @@ const tourSchema = new mongoose.Schema({
     trim: true,
     required: [true, 'A Tour mast have a sammary'],
   },
-  descrition: {
+  descrpition: {
     type: String,
     trim: true,
   },
