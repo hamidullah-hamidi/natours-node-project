@@ -29,6 +29,7 @@ const importData = async () => {
   try {
     await Tour.create(tours);
     console.log('Data successfully loaded!');
+    process.exit();
   } catch (err) {
     console.log(err);
   }
@@ -51,3 +52,5 @@ if (process.argv[2] === '--import') {
 } else if (process.argv[2] === '--delete') {
   deleteData();
 }
+
+console.log(process.argv);
