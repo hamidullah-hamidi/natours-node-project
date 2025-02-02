@@ -40,6 +40,11 @@ exports.getAllTours = async (req, res) => {
 
     query = query.skip(skip).limit(limit);
 
+    if (req.query.page) {
+      const numTours = await Tour.countDocuments();
+      if (skip >= numTours) throw new Error('This page dose not exist!');
+    }
+
     // 2) Execute query
     const tours = await query;
 
@@ -54,7 +59,7 @@ exports.getAllTours = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       status: 'Faild',
-      messaage: 'Invalid route!',
+      messaage: err,
     });
   }
 };
