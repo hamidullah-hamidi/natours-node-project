@@ -8,17 +8,14 @@ exports.aliasTopTours = (req, res, next) => {
 };
 
 class APIFeatures {
-  constructor(query, queryStr) {
+  constructor(query, queryString) {
     this.query = query;
-    this.queryStr = queryStr;
+    this.queryString = queryString;
   }
-}
 
-exports.getAllTours = async (req, res) => {
-  try {
-    // 1) Build query
+  filter() {
     // 1.1) filtering
-    const queryObj = { ...req.query };
+    const queryObj = { ...queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
 
     excludedFields.forEach((el) => delete queryObj[el]);
@@ -28,16 +25,46 @@ exports.getAllTours = async (req, res) => {
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
     console.log(JSON.parse(queryStr));
 
-    let query = Tour.find(JSON.parse(queryStr));
+    this.query.find(JSON.parse(queryStr));
+    // let query = Tour.find(JSON.parse(queryStr));
+  }
 
+  sort() {
     // 1.3  Sorting
-    if (req.query.sort) {
+    if (this.queryString.sort) {
       const sortBy = req.query.sort.split(',').join(' ');
       console.log(sortBy);
       query = query.sort(sortBy);
     } else {
       query = query.sort('-createdAt');
     }
+  }
+}
+
+exports.getAllTours = async (req, res) => {
+  try {
+    // 1) Build query
+    // 1.1) filtering
+    // const queryObj = { ...req.query };
+    // const excludedFields = ['page', 'sort', 'limit', 'fields'];
+
+    // excludedFields.forEach((el) => delete queryObj[el]);
+
+    // // 1.2) Advanced  filtering
+    // let queryStr = JSON.stringify(queryObj);
+    // queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    // console.log(JSON.parse(queryStr));
+
+    // let query = Tour.find(JSON.parse(queryStr));
+
+    // // 1.3  Sorting
+    // if (req.query.sort) {
+    //   const sortBy = req.query.sort.split(',').join(' ');
+    //   console.log(sortBy);
+    //   query = query.sort(sortBy);
+    // } else {
+    //   query = query.sort('-createdAt');
+    // }
 
     // 1.4  Field limiting
     if (req.query.fields) {
@@ -60,7 +87,8 @@ exports.getAllTours = async (req, res) => {
     }
 
     // 2) Execute query
-    const tours = await query;
+    const featuers = new APIFeatures(Tour.find(), req.query).filter();
+    const tours = await featuers.query;
 
     // 3) Send response
     res.status(200).json({
