@@ -111,3 +111,13 @@ exports.deleteTour = async (req, res) => {
     });
   }
 };
+
+exports.getTourStates = async () => {
+  try {
+  } catch (err) {
+    res.status(404).json({
+      status: 'faild',
+      message: 'Invalid route!',
+    });
+  }
+};
