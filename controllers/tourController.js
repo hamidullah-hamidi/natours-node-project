@@ -26,18 +26,20 @@ class APIFeatures {
     console.log(JSON.parse(queryStr));
 
     this.query.find(JSON.parse(queryStr));
-    // let query = Tour.find(JSON.parse(queryStr));
+
+    return this;
   }
 
   sort() {
     // 1.3  Sorting
     if (this.queryString.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
-      console.log(sortBy);
-      query = query.sort(sortBy);
+      const sortBy = this.queryString.sort.split(',').join(' ');
+      this.query = this.query.sort(sortBy);
     } else {
-      query = query.sort('-createdAt');
+      this.query = this.query.sort('-createdAt');
     }
+
+    return this;
   }
 }
 
@@ -87,7 +89,7 @@ exports.getAllTours = async (req, res) => {
     }
 
     // 2) Execute query
-    const featuers = new APIFeatures(Tour.find(), req.query).filter();
+    const featuers = new APIFeatures(Tour.find(), req.query).filter().sort();
     const tours = await featuers.query;
 
     // 3) Send response
