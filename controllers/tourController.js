@@ -50,6 +50,16 @@ class APIFeatures {
 
     return this;
   }
+
+  paginate() {
+    const page = this.queryString.page * 1 || 1;
+    const limit = this.queryString.limit * 1 || 100;
+    const skip = (page - 1) * limit;
+
+    query = query.skip(skip).limit(limit);
+
+    return this;
+  }
 }
 
 exports.getAllTours = async (req, res) => {
@@ -86,19 +96,23 @@ exports.getAllTours = async (req, res) => {
     // }
 
     // 1.5  Pagination
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 100;
-    const skip = (page - 1) * limit;
+    // const page = req.query.page * 1 || 1;
+    // const limit = req.query.limit * 1 || 100;
+    // const skip = (page - 1) * limit;
 
-    query = query.skip(skip).limit(limit);
+    // query = query.skip(skip).limit(limit);
 
-    if (req.query.page) {
-      const numTours = await Tour.countDocuments();
-      if (skip >= numTours) throw new Error('This page dose not exist!');
-    }
+    // if (req.query.page) {
+    //   const numTours = await Tour.countDocuments();
+    //   if (skip >= numTours) throw new Error('This page dose not exist!');
+    // }
 
     // 2) Execute query
-    const featuers = new APIFeatures(Tour.find(), req.query).filter().sort();
+    const featuers = new APIFeatures(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
     const tours = await featuers.query;
 
     // 3) Send response
