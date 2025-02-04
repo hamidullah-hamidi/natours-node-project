@@ -77,10 +77,19 @@ tourSchema.pre('save', function (next) {
 });
 
 //  QUERY meddleware: runs before .save() and .create()
-tourSchema.pre('find', function (next) {
+// tourSchema.pre('find', function (next) {
+tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
+  this.start = Date.now();
   next();
 });
+
+tourSchema.post(/^find/, function (docs, next) {
+  console.log(docs);
+  console.log(`Qurey took ${Date.now() - this.start} miliseconds`);
+  next();
+});
+
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
