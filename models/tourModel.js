@@ -78,9 +78,9 @@ tourSchema.pre('save', function (next) {
 
 //  QUERY meddleware: runs before .save() and .create()
 tourSchema.pre('find', function (next) {
+  this.find({ secretTour: { $ne: true } });
   next();
 });
-
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
