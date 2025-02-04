@@ -64,6 +64,11 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+//  Document meddleware: runs before .save() and .create()
+tourSchema.pre('save', function () {
+  console.log(this);
+});
+
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
