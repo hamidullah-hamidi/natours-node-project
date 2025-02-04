@@ -14,7 +14,8 @@
     "express": "^4.21.2",
     "mongodb": "^6.12.0",
     "mongoose": "^5.13.23",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "slugify": "^1.6.6"
   },
   "devDependencies": {
     "cross-env": "^7.0.3"
