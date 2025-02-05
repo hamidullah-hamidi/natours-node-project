@@ -8,6 +8,8 @@ const tourSchema = new mongoose.Schema(
       required: [true, 'A tour mast have name'],
       unique: true,
       trim: true,
+      maxLength: [40, 'A tour must have less or equal than 40 character'],
+      minLength: [10, 'A tour must have more or equal than 10 character'],
     },
     slug: String,
     duration: {
@@ -21,10 +23,16 @@ const tourSchema = new mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, 'A tour mast have a difficulty'],
+      enum: {
+        values: ['easy', 'medium', 'difficult'],
+        message: 'Difficulty is either: easy, medium or difficult',
+      },
     },
     ratingsAverage: {
       type: Number,
       default: 4.5,
+      min: [1, 'Rating must be above 1.0'],
+      max: [5, 'Rating must be below 5.0'],
     },
     ratingsQuantity: {
       type: Number,
@@ -34,7 +42,15 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'A Tour mast have a price'],
     },
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function (val) {
+          return val < this.price;
+        },
+        message: `Discount price({VALUE}) should be below regular price(${this.price})`,
+      },
+    },
     summary: {
       type: String,
       trim: true,
@@ -85,14 +101,14 @@ tourSchema.pre(/^find/, function (next) {
 });
 
 tourSchema.post(/^find/, function (docs, next) {
-  console.log(docs);
   console.log(`Qurey took ${Date.now() - this.start} miliseconds`);
   next();
 });
 
 // AGGREGATTION meddleware:
 tourSchema.pre('aggregate', function (next) {
-  console.log(this);
+  this.pipeline().unshift({ $match: { $secretTour: { $ne: true } } });
+  // console.log(this.pipeline());
   next();
 });
 
