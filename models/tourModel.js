@@ -90,6 +90,12 @@ tourSchema.post(/^find/, function (docs, next) {
   next();
 });
 
+// AGGREGATTION meddleware:
+tourSchema.pre('aggregate', function (next) {
+  console.log(this);
+  next();
+});
+
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
