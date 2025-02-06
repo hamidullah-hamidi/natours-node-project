@@ -55,28 +55,20 @@ exports.getTour = async (req, res) => {
 };
 
 const catchAsync = (fn) => {
-  fn(req, res, next).catch((err) => next(err));
+  return (req, res, next) => {
+    fn(req, res, next).catch(next);
+  };
 };
 
-exports.createTour = fn(async (req, res) => {
-  try {
-    // const newTour = new Tour({})
-    // newTour.save()
+exports.createTour = catchAsync(async (req, res) => {
+  const newTour = await Tour.create(req.body);
 
-    const newTour = await Tour.create(req.body);
-
-    res.status(201).json({
-      status: 'success',
-      data: {
-        tour: newTour,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'faild',
-      message: err,
-    });
-  }
+  res.status(201).json({
+    status: 'success',
+    data: {
+      tour: newTour,
+    },
+  });
 });
 
 exports.updateTour = async (req, res) => {
