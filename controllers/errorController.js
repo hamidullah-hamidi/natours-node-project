@@ -1,3 +1,11 @@
+const AppError = require('../utilities/AppError');
+
+const handleCastErrorDb = (err) => {
+  const message = `Invalid ${err.message}`;
+
+  return new AppError(message, 400);
+};
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -34,8 +42,12 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
-    sendErrorDev();
+    sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    sendErrorProd();
+    let error = { ...err };
+
+    if (err.name === 'castError') error = handleCastErrorDb(error);
+
+    sendErrorProd(err, res);
   }
 };
