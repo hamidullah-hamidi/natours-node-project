@@ -1,5 +1,12 @@
 const AppError = require('../utilities/AppError');
 
+const handleDuplicateFieldsDB = (err) => {
+  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
+  const message = `Duplicate fields value ${value} please use another value!`;
+
+  return new AppError(message, 404);
+};
+
 const handleCastErrorDb = (err) => {
   const message = `Invalid ${err.path}: ${err.value}`;
 
@@ -45,9 +52,8 @@ module.exports = (err, req, res, next) => {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
     // CastError means that mongoDB wait for an valid ID
-    if (err.name === 'CastError') {
-      err = handleCastErrorDb(err);
-    }
+    if (err.name === 'CastError') err = handleCastErrorDb(err);
+    if (err.code === 11000) err = handleDuplicateFieldsDB(err);
 
     sendErrorProd(err, res);
   }
