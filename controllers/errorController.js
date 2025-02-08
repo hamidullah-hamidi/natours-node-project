@@ -1,7 +1,7 @@
 const AppError = require('../utilities/AppError');
 
 const handleCastErrorDb = (err) => {
-  const message = `Invalid ${err.message}`;
+  const message = `Invalid ${err.path}: ${err.value}`;
 
   return new AppError(message, 400);
 };
@@ -44,9 +44,10 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    let error = { ...err };
-
-    if (err.name === 'castError') error = handleCastErrorDb(error);
+    // CastError means that mongoDB wait for an valid ID
+    if (err.name === 'CastError') {
+      err = handleCastErrorDb(err);
+    }
 
     sendErrorProd(err, res);
   }
