@@ -24,3 +24,4 @@ const userSchema = new mongoose.Schema({
 });
 
 const userModel = mongoose.Model('userModel', userSchema);
+console.log('hi hamid');
