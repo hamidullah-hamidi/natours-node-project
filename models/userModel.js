@@ -37,4 +37,4 @@ const User = mongoose.model('User', userSchema);
 
 module.exports = User;
 
-console.log('hamid');
+// console.log('hamid');
