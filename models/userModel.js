@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema({
       validator: function (el) {
         return el === this.password;
       },
+      message: 'Passwords are not the same!',
     },
   },
 });
@@ -36,5 +37,3 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
-
-// asdfasdf
