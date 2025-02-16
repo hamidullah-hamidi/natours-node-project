@@ -33,6 +33,8 @@ exports.login = (req, res, next) => {
   }
 
   // 2)  Check if user exist && password is correct
+  const user = User.findOne({ email });
+
   // 3)  if everything is ok, send token to client
 
   const token = '';
