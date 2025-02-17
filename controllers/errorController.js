@@ -20,6 +20,9 @@ const handleValidationErrorDB = (err) => {
   return new AppError(message, 404);
 };
 
+const handleJWTError = (err) =>
+  new AppError('Invalid token, please login again!', 401);
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -36,7 +39,7 @@ const sendErrorProd = (err, res) => {
       status: err.status,
       message: err.message,
     });
-    // programming or other unknwon error: don't leak error details
+    // programming or other unknown error: don't leak error details
   } else {
     // 1) Log error:
     console.log('ERROR 💥', err);
@@ -61,6 +64,7 @@ module.exports = (err, req, res, next) => {
     if (err.name === 'CastError') err = handleCastErrorDb(err);
     if (err.code === 11000) err = handleDuplicateFieldsDB(err);
     if (err.name === 'ValidationError') err = handleValidationErrorDB(err);
+    if (err.name === 'JsonWebTokenError') err = handleJWTError(err);
 
     sendErrorProd(err, res);
   }
