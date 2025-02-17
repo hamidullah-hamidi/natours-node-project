@@ -55,18 +55,16 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.protect = catchAsync(async (req, res, next) => {
   // 1)  Get the token and check if it's true
+
   let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
+  if (req.headers.authorization && req.headers.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
   }
   console.log(token);
 
   if (!token) {
     return next(
-      new AppError('You are not logged in!, please login to get access.', 401)
+      new AppError('You are not logged in, please login to get access!', 401)
     );
   }
 
@@ -78,3 +76,18 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   next();
 });
+
+let token;
+if (
+  req.headers.authorization &&
+  req.headers.authorization.startsWith('Bearer')
+) {
+  token = req.headers.authorization.split(' ')[1];
+}
+console.log(token);
+
+if (!token) {
+  return next(
+    new AppError('You are not logged in!, please login to get access.', 401)
+  );
+}
