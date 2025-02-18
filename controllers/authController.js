@@ -16,6 +16,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    role: req.body.role,
   });
 
   const token = signToken(newUser._id);
@@ -63,7 +64,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(' ')[1];
   }
-  console.log(token);
 
   if (!token) {
     return next(
@@ -73,7 +73,6 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 2)  Verification token
   const decode = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log(decode);
 
   // 3)  Check if user still exists
   const currentUser = await User.findById(decode.id);
@@ -95,14 +94,14 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.restrictedTo = catchAsync(async (...roles) => {
+exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     // roles['admin, 'lead-guide']    role='user'
     if (!roles.includes(req.user.role)) {
       return next(
-        new AppError('You do not have permission to access this!,', 403)
+        new AppError('You do not have permission to Delete this!,', 403)
       );
     }
     next();
   };
-});
+};
