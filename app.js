@@ -4,7 +4,7 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
-const AppError = require('./utilities/AppError');
+const AppError = require('./utils/appError');
 
 const app = express();
 
