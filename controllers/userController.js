@@ -1,5 +1,6 @@
 const User = require('../models/userModel');
 const catchAsync = require('../utilities/catchAsync');
+const AppError = require('./../utilities/appError');
 
 exports.getAllUsers = catchAsync(async (req, res) => {
   const users = await User.find();
@@ -30,29 +31,25 @@ exports.createUser = catchAsync(async (req, res) => {
   });
 });
 
+exports.updateMe = catchAsync(async (req, res, next) => {
+  // 1) Create error if the user POSTs update data
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(
+      new AppError(
+        'This route is not for update passwords. Please use /updateMyPassword'
+      )
+    );
+  }
+
+  // 2) Update user document
+});
+
 exports.getUser = catchAsync(async (req, res) => {
   const user = await User.findById(req.params.id);
 
   res.status(200).json({
     status: 'success',
     user: user,
-  });
-
-  res.status(500).json({
-    status: 'error',
-    message: 'The route is not defined yet',
-  });
-});
-
-exports.updateUser = catchAsync(async (req, res) => {
-  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  res.status(200).json({
-    status: 'success',
-    updatedUser: user,
   });
 
   res.status(500).json({
