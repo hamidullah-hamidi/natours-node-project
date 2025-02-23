@@ -67,11 +67,11 @@ userSchema.pre('save', function (next) {
   next();
 });
 
-// userSchema.pre(/^find/, function(next) {
-//   // this points to the current query
-//   this.find({ active: { $ne: false } });
-//   next();
-// });
+userSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ active: { $ne: false } });
+  next();
+});
 
 userSchema.methods.correctPassword = async function (
   candidatePassword,
