@@ -80,7 +80,7 @@ app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} in this server!`));
 });
 
-// Error handling meddleware
+// Error handling middleware
 app.use(globalErrorHandler);
 
 module.exports = app;

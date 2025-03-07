@@ -1,4 +1,4 @@
-const { default: mongoose, mongo } = require('mongoose');
+const { default: mongoose } = require('mongoose');
 
 const reviewSchema = new mongoose.Schema(
   {
