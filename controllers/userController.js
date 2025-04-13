@@ -15,16 +15,17 @@ exports.getAllUsers = factory.getAll(User);
 
 exports.getUser = factory.getOne(User);
 
+
+exports.updateUser = factory.updateOne(User);
+
+exports.deleteUser = factory.deleteOne(User);
+
 exports.createUser = catchAsync(async (req, res) => {
   res.status(500).json({
     status: 'fail',
     message: 'This route is not defined, please use Signup instead!',
   });
 });
-
-exports.updateUser = factory.updateOne(User);
-
-exports.deleteUser = factory.deleteOne(User);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
