@@ -58,6 +58,8 @@ reviewSchema.static.calcAverageRatings = async function (tour) {
       },
     },
   ]);
+
+  console.log(stats);
 };
 
 reviewSchema.pre('save', function (next) {
