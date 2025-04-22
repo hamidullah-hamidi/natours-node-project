@@ -1,3 +1,4 @@
+const cors = require('cors');
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
@@ -6,6 +7,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -20,6 +22,24 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // 1) GLOBAL MIDDLEWARES
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        'https://fonts.googleapis.com',
+        'https://unpkg.com',
+      ],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      connectSrc: ["'self'", 'http://127.0.0.1:3000'],
+    },
+  })
+);
+
 // Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -41,6 +61,8 @@ app.use('/api', limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+app.use(cookieParser());
+
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Data sanitization against NoSQL query injection
@@ -69,6 +91,8 @@ app.use((req, res, next) => {
   console.log(req.cookies);
   next();
 });
+
+app.use(cors());
 
 // 3) ROUTES
 app.use('/', viewRouter);
