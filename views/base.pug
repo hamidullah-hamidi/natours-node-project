@@ -7,20 +7,23 @@ html
       link(rel='stylesheet' href='/css/style.css')
       link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
       link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,300i,700')
-      title Natours | #{title}
-  
+      link(rel='stylesheet', href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css')
+  title Natours | #{title}
+
   body
     // HEADER
     include _header
-        
+
     // CONTENT
     block content
       h1 This is a placeholder heading
-      
+
     // FOOTER
     include _footer
-    
+
     //- script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js')
-    //- script(src='/js/mapbox.js')
+    //- script(src='/js/mapBox.js')
+
+
     //- script(src='/js/login.js')
     //- script(src='/js/bundle.js')

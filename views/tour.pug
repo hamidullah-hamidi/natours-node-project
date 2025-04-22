@@ -1,9 +1,8 @@
 extends base
 include _reviewCard
 
-block append head
-  script(src='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js')
-  link(href='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css' rel='stylesheet')
+block append head 
+  //- script(src='/js/mapBox.js')
 
 mixin overviewBox(label, text, icon)
   .overview-box__detail
@@ -35,7 +34,7 @@ block content
     .overview-box
       div
         .overview-box__group
-          h2.heading-secondary.ma-bt-lg Quick facts
+          h2.heading-secondary.ma-bt-lg Quick facts 
 
           - const date = tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'})
           +overviewBox('Next date', date, 'calendar')
