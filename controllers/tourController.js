@@ -21,42 +21,35 @@ exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
-  try {
-    const stats = await Tour.aggregate([
-      {
-        $match: { ratingsAverage: { $gte: 4.5 } },
-        // $match: { _id: { $ne: 'EASY' } },
+  const stats = await Tour.aggregate([
+    {
+      $match: { ratingsAverage: { $gte: 4.6 } },
+      // $match: { _id: { $ne: 'EASY' } },
+    },
+    {
+      $group: {
+        _id: { $toUpper: '$difficulty' },
+        numTours: { $sum: 1 },
+        numRatings: { $sum: '$ratingsQuantity' },
+        avgRating: {
+          $avg: '$ratingsAverage',
+        } /* should put ( $ ) before fieldName that mongodb think this is a field not a String  */,
+        avgPrice: { $avg: '$price' },
+        minPrice: { $min: '$price' },
+        maxPrice: { $max: '$price' },
       },
-      {
-        $group: {
-          _id: { $toUpper: '$difficulty' },
-          numTours: { $sum: 1 },
-          numRatings: { $sum: '$ratingsQuantity' },
-          avgRating: {
-            $avg: '$ratingsAverage',
-          } /* should put ( $ ) before fieldName that mongodb think this is a field not a String  */,
-          avgPrice: { $avg: '$price' },
-          minPrice: { $min: '$price' },
-          maxPrice: { $max: '$price' },
-        },
-      },
-      {
-        $sort: { avgRating: 1 },
-      },
-    ]);
+    },
+    {
+      $sort: { avgRating: 1 },
+    },
+  ]);
 
-    res.status(200).json({
-      status: 'success',
-      data: {
-        stats,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err.message,
-    });
-  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      stats,
+    },
+  });
 });
 
 exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
@@ -77,7 +70,7 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     {
       $group: {
         _id: { $month: '$startDates' },
-        numTourStarts: { $sum: 1 },
+        numTourStart: { $sum: 1 },
         tours: { $push: '$name' },
       },
     },
@@ -85,15 +78,13 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
       $addFields: { month: '$_id' },
     },
     {
-      $project: {
-        _id: 0,
-      },
+      $project: { _id: 0 },
     },
     {
-      $sort: { numTourStarts: -1 },
+      $sort: { numTourStart: -1 },
     },
     {
-      $limit: 12,
+      $limit: 2 /* not important in this case */,
     },
   ]);
 
