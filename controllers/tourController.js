@@ -21,35 +21,42 @@ exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
-  const stats = await Tour.aggregate([
-    {
-      $match: { ratingsAverage: { $gte: 4.5 } },
-    },
-    {
-      $group: {
-        _id: { $toUpper: '$difficulty' },
-        numTours: { $sum: 1 },
-        numRatings: { $sum: '$ratingsQuantity' },
-        avgRating: { $avg: '$ratingsAverage' },
-        avgPrice: { $avg: '$price' },
-        minPrice: { $min: '$price' },
-        maxPrice: { $max: '$price' },
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } },
+        // $match: { _id: { $ne: 'EASY' } },
       },
-    },
-    {
-      $sort: { avgPrice: 1 },
-    },
-    // {
-    //   $match: { _id: { $ne: 'EASY' } }
-    // }
-  ]);
+      {
+        $group: {
+          _id: { $toUpper: '$difficulty' },
+          numTours: { $sum: 1 },
+          numRatings: { $sum: '$ratingsQuantity' },
+          avgRating: {
+            $avg: '$ratingsAverage',
+          } /* should put ( $ ) before fieldName that mongodb think this is a field not a String  */,
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+      {
+        $sort: { avgRating: 1 },
+      },
+    ]);
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      stats,
-    },
-  });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        stats,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err.message,
+    });
+  }
 });
 
 exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
