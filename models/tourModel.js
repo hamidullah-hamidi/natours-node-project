@@ -36,6 +36,7 @@ const tourSchema = new mongoose.Schema(
       default: 4.5,
       min: [1, 'Rating must be above 1.0'],
       max: [5, 'Rating must be below 5.0'],
+      set: (val) => Math.round(val * 10) / 10,
     },
     ratingsQuantity: {
       type: Number,
@@ -116,7 +117,7 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
-// tourSchema.index({ price: 1});
+// tourSchema.index({ price: 1 });
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ startLocation: '2dsphere' });
 tourSchema.index({ startLocation: '2dsphere' });
